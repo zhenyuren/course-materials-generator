@@ -460,10 +460,13 @@ class RenYuMaterialsGenerator:
             course['formattedSemester'] = self.metadata['semester']
             
             # 创建课程文件夹（替换特殊字符）
+            teacher_name = course.get('teacherName', '未知教师')
             course_name = course.get('courseName', '')
             safe_course_name = course_name.replace('/', '_').replace('\\', '_').replace(':', '_').replace('*', '_').replace('?', '_').replace('"', '_').replace('<', '_').replace('>', '_').replace('|', '_')
             course_folder_name = f"{course_code}_{safe_course_name}"
-            output_dir = os.path.join(self.output_base_dir, course_folder_name)
+            # 创建教师文件夹
+            teacher_folder = f"{teacher_name}_天府学院期初资料"
+            output_dir = os.path.join(self.output_base_dir, teacher_folder, course_folder_name)
             os.makedirs(output_dir, exist_ok=True)
             
             # 生成教学大纲
