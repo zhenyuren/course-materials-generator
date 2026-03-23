@@ -38,10 +38,17 @@ if uploaded_file is not None:
             st.error("❌ JSON文件格式不正确，需要包含courses列表")
             st.stop()
         
+        # 合并相同课程名称的课程信息
+        merged_courses = {}
+        for course in course_data:
+            course_name = course.get('courseName', '')
+            if course_name not in merged_courses:
+                merged_courses[course_name] = course.copy()
+        
         # 显示课程信息
         st.subheader("📋 课程信息")
-        for i, course in enumerate(course_data, 1):
-            with st.expander(f"课程 {i}: {course.get('courseName', '未知课程')}"):
+        for i, (course_name, course) in enumerate(merged_courses.items(), 1):
+            with st.expander(f"课程 {i}: {course_name}"):
                 col1, col2 = st.columns(2)
                 with col1:
                     st.write(f"**课程代码**: {course.get('courseCode', '')}")
@@ -61,8 +68,8 @@ if uploaded_file is not None:
                     generator.template_dir = template_dir
                     generator.output_base_dir = output_dir
                     
-                    # 设置课程数据
-                    generator.courses = course_data
+                    # 设置课程数据（使用合并后的课程数据）
+                    generator.courses = list(merged_courses.values())
                     
                     # 设置元数据
                     generator.metadata = {
