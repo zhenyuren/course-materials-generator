@@ -425,14 +425,14 @@ class RenYuMaterialsGenerator:
         print(f"📋 self.courses内容: {self.courses}")
         print(f"📋 self.courses长度: {len(self.courses)}")
         
-        # 合并相同课程代码的课程信息
+        # 合并相同课程名称的课程信息
         merged_courses = {}
         for i, course in enumerate(self.courses):
             print(f"📋 课程{i}类型: {type(course)}, 内容: {course}")
             if isinstance(course, dict):
-                course_code = course.get('courseCode', '')
-                if course_code not in merged_courses:
-                    merged_courses[course_code] = course.copy()
+                course_name = course.get('courseName', '')
+                if course_name not in merged_courses:
+                    merged_courses[course_name] = course.copy()
                 else:
                     # 只保留第一个教师的姓名，避免重复
                     pass
@@ -441,8 +441,8 @@ class RenYuMaterialsGenerator:
         
         # 打印调试信息
         print(f"📋 合并后的课程数量: {len(merged_courses)}")
-        for course_code, course in merged_courses.items():
-            print(f"📋 课程代码: {course_code}, 课程类型: {type(course)}")
+        for course_name, course in merged_courses.items():
+            print(f"📋 课程名称: {course_name}, 课程类型: {type(course)}")
         
         # 设置元数据
         self.metadata = {
@@ -451,8 +451,8 @@ class RenYuMaterialsGenerator:
         }
         
         # 为每门课程生成资料
-        for course_code, course in merged_courses.items():
-            print(f"📋 当前课程: {course_code}, course类型: {type(course)}")
+        for course_name, course in merged_courses.items():
+            print(f"📋 当前课程: {course_name}, course类型: {type(course)}")
             print(f"📋 course内容: {course}")
             print(f"📋 metadata类型: {type(self.metadata)}")
             print(f"📋 metadata内容: {self.metadata}")
@@ -461,7 +461,7 @@ class RenYuMaterialsGenerator:
             
             # 创建课程文件夹（替换特殊字符）
             teacher_name = course.get('teacherName', '未知教师')
-            course_name = course.get('courseName', '')
+            course_code = course.get('courseCode', '')
             safe_course_name = course_name.replace('/', '_').replace('\\', '_').replace(':', '_').replace('*', '_').replace('?', '_').replace('"', '_').replace('<', '_').replace('>', '_').replace('|', '_')
             course_folder_name = f"{course_code}_{safe_course_name}"
             # 创建教师文件夹
