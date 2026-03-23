@@ -1,0 +1,36 @@
+{
+  "metadata": {
+    "generated_at": "2026-03-17 23:40:00",
+    "total_courses": 2,
+    "teacher_name": "测试教师2",
+    "formatted_date": "2026年03月17日"
+  },
+  "courses": [
+    {
+      "courseName": "测试课程2",
+      "courseCode": "TEST1002",
+      "department": "测试学院",
+      "applicableScope": "班级:2024级测试班02",
+      "teacherName": "测试教师2",
+      "credits": "3.0",
+      "totalHours": "48",
+      "courseNature": "必修课",
+      "currentDate": "2026年03月17日",
+      "englishName": "Test Course 2",
+      "formattedSemester": "2026学年春季学期"
+    },
+    {
+      "courseName": "测试课程3",
+      "courseCode": "TEST1003",
+      "department": "测试学院",
+      "applicableScope": "班级:2024级测试班03",
+      "teacherName": "测试教师2",
+      "credits": "2.0",
+      "totalHours": "32",
+      "courseNature": "选修课",
+      "currentDate": "2026年03月17日",
+      "englishName": "Test Course 3",
+      "formattedSemester": "2026学年春季学期"
+    }
+  ]
+}

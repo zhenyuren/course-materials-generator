@@ -1,0 +1,127 @@
+{
+  "metadata": {
+    "generated_at": "2026-03-23 22:11:09",
+    "total_courses": 9,
+    "teacher_name": "佘脊",
+    "formatted_date": "2026年03月23日"
+  },
+  "courses": [
+    {
+      "courseName": "合作组织专业见习",
+      "courseCode": "RRD1324A",
+      "department": "现代管理学院",
+      "applicableScope": "班级:2023级本农村区域01班Z2023级本农村区域B01班Z",
+      "teacherName": "佘脊",
+      "credits": "2.0",
+      "totalHours": "32",
+      "courseNature": "专业必修课",
+      "currentDate": "2026年03月23日",
+      "englishName": "Course English Name",
+      "formattedSemester": "2026学年春季学期"
+    },
+    {
+      "courseName": "合作组织专业见习",
+      "courseCode": "RRD1324A",
+      "department": "现代管理学院",
+      "applicableScope": "班级:2023级本农村区域01班Z2023级本农村区域B01班Z",
+      "teacherName": "佘脊",
+      "credits": "2.0",
+      "totalHours": "32",
+      "courseNature": "专业必修课",
+      "currentDate": "2026年03月23日",
+      "englishName": "Course English Name",
+      "formattedSemester": "2026学年春季学期"
+    },
+    {
+      "courseName": "合作组织专业见习",
+      "courseCode": "RRD1324A",
+      "department": "现代管理学院",
+      "applicableScope": "班级:2023级本农村区域01班Z2023级本农村区域B01班Z",
+      "teacherName": "佘脊",
+      "credits": "2.0",
+      "totalHours": "32",
+      "courseNature": "专业必修课",
+      "currentDate": "2026年03月23日",
+      "englishName": "Course English Name",
+      "formattedSemester": "2026学年春季学期"
+    },
+    {
+      "courseName": "合作组织专业见习",
+      "courseCode": "RRD1324A",
+      "department": "现代管理学院",
+      "applicableScope": "班级:2023级本农村区域01班Z2023级本农村区域B01班Z",
+      "teacherName": "佘脊",
+      "credits": "2.0",
+      "totalHours": "32",
+      "courseNature": "专业必修课",
+      "currentDate": "2026年03月23日",
+      "englishName": "Course English Name",
+      "formattedSemester": "2026学年春季学期"
+    },
+    {
+      "courseName": "农业政策学",
+      "courseCode": "RRD2402A",
+      "department": "现代管理学院",
+      "applicableScope": "班级:2024级本农村区域01班Z",
+      "teacherName": "佘脊",
+      "credits": "3.0",
+      "totalHours": "48",
+      "courseNature": "专业必修课",
+      "currentDate": "2026年03月23日",
+      "englishName": "Course English Name",
+      "formattedSemester": "2026学年春季学期"
+    },
+    {
+      "courseName": "学科专业认知",
+      "courseCode": "DIM2501A",
+      "department": "现代管理学院",
+      "applicableScope": "班级:2025级本数智管理创新01班Z",
+      "teacherName": "佘脊",
+      "credits": "3.0",
+      "totalHours": "48",
+      "courseNature": "专业必修课",
+      "currentDate": "2026年03月23日",
+      "englishName": "Course English Name",
+      "formattedSemester": "2026学年春季学期"
+    },
+    {
+      "courseName": "学科专业认知",
+      "courseCode": "DIM2501A",
+      "department": "现代管理学院",
+      "applicableScope": "班级:2025级本数智管理创新01班Z",
+      "teacherName": "佘脊",
+      "credits": "3.0",
+      "totalHours": "48",
+      "courseNature": "专业必修课",
+      "currentDate": "2026年03月23日",
+      "englishName": "Course English Name",
+      "formattedSemester": "2026学年春季学期"
+    },
+    {
+      "courseName": "学科专业认知",
+      "courseCode": "DIM2501A",
+      "department": "现代管理学院",
+      "applicableScope": "班级:2025级本数智管理创新01班Z",
+      "teacherName": "佘脊",
+      "credits": "3.0",
+      "totalHours": "48",
+      "courseNature": "专业必修课",
+      "currentDate": "2026年03月23日",
+      "englishName": "Course English Name",
+      "formattedSemester": "2026学年春季学期"
+    },
+    {
+      "courseName": "学科专业认知",
+      "courseCode": "DIM2501A",
+      "department": "现代管理学院",
+      "applicableScope": "班级:2025级本数智管理创新01班Z",
+      "teacherName": "佘脊",
+      "credits": "3.0",
+      "totalHours": "48",
+      "courseNature": "专业必修课",
+      "currentDate": "2026年03月23日",
+      "englishName": "Course English Name",
+      "formattedSemester": "2026学年春季学期"
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>课程期初资料生成工具</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="file"] {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .info {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196F3;
+        }
+        .info h3 {
+            margin-top: 0;
+            color: #1976D2;
+        }
+        .info ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .info li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>课程期初资料生成工具</h1>
+        
+        <div class="info">
+            <h3>使用说明</h3>
+            <ul>
+                <li>请上传包含课程信息的JSON文件</li>
+                <li>JSON文件应包含课程代码、课程名称、教师姓名等信息</li>
+                <li>系统将自动生成教学大纲、课程检查表和审核汇总表</li>
+                <li>生成的文件可以直接下载保存</li>
+            </ul>
+        </div>
+        
+        <form action="/generate" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="json_file">选择JSON文件：</label>
+                <input type="file" id="json_file" name="json_file" accept=".json" required>
+            </div>
+            <button type="submit">生成课程资料</button>
+        </form>
+    </div>
+</body>
+</html>

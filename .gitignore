@@ -1,0 +1,22 @@
+# Python
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+
+# Streamlit
+.streamlit/
+*.log
+
+# Output files
+output/
+*.zip
+*.docx
+*.xlsx
+
+# Environment
+.env
+venv/
+venv*/
+env/
+env*/

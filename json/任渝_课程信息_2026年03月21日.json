@@ -1,0 +1,88 @@
+{
+  "metadata": {
+    "generated_at": "2026-03-21 22:01:09",
+    "total_courses": 6,
+    "teacher_name": "任渝",
+    "formatted_date": "2026年03月21日"
+  },
+  "courses": [
+    {
+      "courseName": "财经公文写作",
+      "courseCode": "FIN0008B",
+      "department": "智能金融学院",
+      "applicableScope": "东区24级专资产评估与管理01班+证券实务01班",
+      "teacherName": "任渝",
+      "credits": "2.0",
+      "totalHours": "32",
+      "courseNature": "专业拓展课",
+      "currentDate": "2026年03月21日",
+      "englishName": "Course English Name",
+      "formattedSemester": "2026学年春季学期"
+    },
+    {
+      "courseName": "大数据分析基础",
+      "courseCode": "FIN3004A",
+      "department": "智能金融学院",
+      "applicableScope": "东区24级本数字经济01班",
+      "teacherName": "任渝",
+      "credits": "2.0",
+      "totalHours": "32",
+      "courseNature": "专业必修课",
+      "currentDate": "2026年03月21日",
+      "englishName": "Course English Name",
+      "formattedSemester": "2026学年春季学期"
+    },
+    {
+      "courseName": "跨境电商大数据统计与分析",
+      "courseCode": "FIN4011B",
+      "department": "智能金融学院",
+      "applicableScope": "东区24级专跨境电子商务01班",
+      "teacherName": "任渝",
+      "credits": "4.0",
+      "totalHours": "64",
+      "courseNature": "专业核心课",
+      "currentDate": "2026年03月21日",
+      "englishName": "Course English Name",
+      "formattedSemester": "2026学年春季学期"
+    },
+    {
+      "courseName": "跨境电商大数据统计与分析",
+      "courseCode": "FIN4011B",
+      "department": "智能金融学院",
+      "applicableScope": "东区24级专跨境电子商务01班",
+      "teacherName": "任渝",
+      "credits": "4.0",
+      "totalHours": "64",
+      "courseNature": "专业核心课",
+      "currentDate": "2026年03月21日",
+      "englishName": "Course English Name",
+      "formattedSemester": "2026学年春季学期"
+    },
+    {
+      "courseName": "大数据处理技术",
+      "courseCode": "FIN3005A",
+      "department": "智能金融学院",
+      "applicableScope": "班级:2023级本数字经济01班Z",
+      "teacherName": "任渝",
+      "credits": "2.0",
+      "totalHours": "32",
+      "courseNature": "专业必修课",
+      "currentDate": "2026年03月21日",
+      "englishName": "Course English Name",
+      "formattedSemester": "2026学年春季学期"
+    },
+    {
+      "courseName": "大数据处理技术",
+      "courseCode": "FIN3005A",
+      "department": "智能金融学院",
+      "applicableScope": "班级:2023级本数字经济B01班Z",
+      "teacherName": "任渝",
+      "credits": "2.0",
+      "totalHours": "32",
+      "courseNature": "专业必修课",
+      "currentDate": "2026年03月21日",
+      "englishName": "Course English Name",
+      "formattedSemester": "2026学年春季学期"
+    }
+  ]
+}

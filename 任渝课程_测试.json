@@ -1,0 +1,36 @@
+{
+  "metadata": {
+    "generated_at": "2026-03-17 23:50:00",
+    "total_courses": 2,
+    "teacher_name": "任渝",
+    "formatted_date": "2026年03月17日"
+  },
+  "courses": [
+    {
+      "courseName": "大数据分析基础",
+      "courseCode": "DAT3001",
+      "department": "智能金融学院",
+      "applicableScope": "班级:2024级本金融科技01班",
+      "teacherName": "任渝",
+      "credits": "3.0",
+      "totalHours": "48",
+      "courseNature": "专业必修课",
+      "currentDate": "2026年03月17日",
+      "englishName": "Big Data Analysis",
+      "formattedSemester": "2026学年春季学期"
+    },
+    {
+      "courseName": "人工智能导论",
+      "courseCode": "AI2001",
+      "department": "智能金融学院",
+      "applicableScope": "班级:2024级本金融科技01班",
+      "teacherName": "任渝",
+      "credits": "2.5",
+      "totalHours": "40",
+      "courseNature": "专业必修课",
+      "currentDate": "2026年03月17日",
+      "englishName": "Introduction to AI",
+      "formattedSemester": "2026学年春季学期"
+    }
+  ]
+}

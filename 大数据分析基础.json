@@ -1,0 +1,23 @@
+{
+  "metadata": {
+    "generated_at": "2026-03-17 22:38:20",
+    "total_courses": 1,
+    "teacher_name": "任渝",
+    "formatted_date": "2026年03月17日"
+  },
+  "courses": [
+    {
+      "courseName": "大数据分析基础",
+      "courseCode": "FIN3004A",
+      "department": "智能金融学院",
+      "applicableScope": "东区24级本数字经济01班",
+      "teacherName": "任渝",
+      "credits": "2.0",
+      "totalHours": "32",
+      "courseNature": "专业必修课",
+      "currentDate": "2026年03月17日",
+      "englishName": "Course English Name",
+      "formattedSemester": "2026学年春季学期"
+    }
+  ]
+}
