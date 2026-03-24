@@ -5,6 +5,12 @@ import zipfile
 import urllib.parse
 from generate_renyu_materials import RenYuMaterialsGenerator
 from datetime import datetime
+from flask import Flask, request, jsonify
+import threading
+import traceback
+
+# 创建Flask应用实例
+flask_app = Flask(__name__)
 
 # 设置页面标题和布局
 st.set_page_config(page_title="课程期初资料生成工具", layout="wide")
@@ -219,3 +225,97 @@ else:
 # 底部信息
 st.markdown("---")
 st.caption("💡 提示：请确保JSON文件包含完整的课程信息，包括课程名称、代码、教师姓名等字段")
+
+
+# Flask API端点
+@flask_app.route('/api/generate', methods=['POST'])
+def api_generate():
+    """API端点：生成课程资料"""
+    try:
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({'success': False, 'message': '请求数据为空'}), 400
+        
+        courses = data.get('courses', [])
+        
+        if not courses:
+            return jsonify({'success': False, 'message': '课程数据为空'}), 400
+        
+        # 创建生成器实例
+        generator = RenYuMaterialsGenerator()
+        generator.template_dir = "期初资料1"
+        generator.output_base_dir = "output"
+        generator.courses = courses
+        generator.metadata = {
+            'date': datetime.now().strftime('%Y年%m月%d日'),
+            'semester': '2026年春季学期'
+        }
+        
+        # 生成资料
+        generator.generate_all_materials()
+        
+        # 获取生成的文件
+        teacher_name = courses[0].get('teacherName', '未知教师')
+        output_folder = os.path.join(generator.output_base_dir, f"{teacher_name}_天府学院期初资料")
+        
+        # 创建ZIP文件
+        zip_filename = f"{teacher_name}_课程资料.zip"
+        zip_path = os.path.join("output", zip_filename)
+        
+        with zipfile.ZipFile(zip_path, 'w') as zipf:
+            for root, dirs, files in os.walk(output_folder):
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    arcname = os.path.relpath(file_path, "output")
+                    zipf.write(file_path, arcname)
+        
+        # 返回下载链接
+        download_url = f"/api/download/{zip_filename}"
+        
+        return jsonify({
+            'success': True,
+            'zipUrl': download_url,
+            'filename': zip_filename,
+            'message': f'成功生成 {len(courses)} 门课程的资料'
+        })
+    
+    except Exception as e:
+        print(f"API生成失败: {str(e)}")
+        print(traceback.format_exc())
+        return jsonify({'success': False, 'message': f'生成失败: {str(e)}'}), 500
+
+
+@flask_app.route('/api/download/<filename>', methods=['GET'])
+def api_download(filename):
+    """API端点：下载文件"""
+    try:
+        file_path = os.path.join("output", filename)
+        
+        if not os.path.exists(file_path):
+            return jsonify({'success': False, 'message': '文件不存在'}), 404
+        
+        return flask_app.send_file(
+            file_path,
+            as_attachment=True,
+            download_name=filename,
+            mimetype='application/zip'
+        )
+    
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'下载失败: {str(e)}'}), 500
+
+
+# 在单独的线程中启动Flask服务器
+def start_flask_server():
+    """在单独的线程中启动Flask服务器"""
+    try:
+        flask_app.run(host='0.0.0.0', port=5001, debug=False)
+    except Exception as e:
+        print(f"Flask服务器启动失败: {str(e)}")
+        print(traceback.format_exc())
+
+
+# 启动Flask服务器
+flask_thread = threading.Thread(target=start_flask_server, daemon=True)
+flask_thread.start()
