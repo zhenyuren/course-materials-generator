@@ -170,17 +170,28 @@
         
         <div class="section">
             <h2>系统要求</h2>
+            <p>本工具使用Streamlit Cloud部署，无需本地安装任何软件，只需：</p>
             <ul>
-                <li>Python 3.6+</li>
-                <li>安装依赖：<code>pip install -r requirements.txt</code></li>
+                <li>一台连接互联网的电脑</li>
+                <li>一个现代浏览器（推荐使用Chrome、Firefox、Edge等）</li>
+                <li>从学校智能体平台下载的课程信息JSON文件</li>
             </ul>
         </div>
         
         <div class="section">
             <h2>使用步骤</h2>
             
-            <h3><span class="step-number">1</span>准备JSON数据文件</h3>
-            <p>您需要准备一个包含课程信息的JSON文件，格式如下：</p>
+            <h3><span class="step-number">1</span>从学校智能体下载JSON数据文件</h3>
+            <p>您可以从学校智能体平台下载包含课程信息的JSON文件，步骤如下：</p>
+            <ol>
+                <li>访问学校智能体平台，登录您的账号</li>
+                <li>找到"教师课程信息查询"应用并点击"开始使用"</li>
+                <li>点击"教师排课查询"按钮</li>
+                <li>输入您的教师姓名和工号，点击"查询"</li>
+                <li>点击页面右上角的"下载JSON文件"按钮</li>
+                <li>保存下载的JSON文件到您的电脑</li>
+            </ol>
+            <p>JSON文件格式示例：</p>
             <pre>[{
     "courseCode": "FIN0008B",
     "courseName": "财经公文写作",
@@ -193,44 +204,43 @@
     "englishName": "Course English Name"
 }]</pre>
             
-            <h3><span class="step-number">2</span>准备模板文件</h3>
-            <p>确保您的模板目录中包含以下文件：</p>
+            <h3><span class="step-number">2</span>准备工作</h3>
+            <p>Streamlit Cloud版本的应用已经内置了所有必要的模板文件，您只需要：</p>
             <ul>
-                <li><code>1 课程教学大纲基础模版.docx</code> - 教学大纲模板</li>
-                <li><code>附件3 课程组教学资料检查情况记录表-完全一致模板.xlsx</code> - 课程检查记录表模板</li>
-                <li><code>附件1 教学大纲的审核汇总表-完全一致模板.xlsx</code> - 审核汇总表模板</li>
-                <li><code>任渝.png</code> - 课程组负责人电子签名（如果有）</li>
-                <li><code>陈蔚.jpg</code> - 开课单位负责人电子签名</li>
+                <li>确保您已经从学校智能体平台下载了课程信息JSON文件</li>
+                <li>确保您的网络连接正常</li>
+                <li>准备好一个保存生成文件的位置</li>
             </ul>
             
-            <h3><span class="step-number">3</span>运行应用程序</h3>
-            <p>在命令行中运行：</p>
-            <pre>python course_materials_app.py</pre>
+            <h3><span class="step-number">3</span>访问Streamlit Cloud应用</h3>
+            <p>打开浏览器，访问以下URL：</p>
+            <pre>https://course-materials-generator.streamlit.app</pre>
             
-            <h3><span class="step-number">4</span>使用应用程序界面</h3>
+            <h3><span class="step-number">4</span>使用Streamlit应用界面</h3>
             <ol>
-                <li><strong>选择JSON文件</strong>：点击"浏览"按钮选择您的课程信息JSON文件</li>
-                <li><strong>选择模板目录</strong>：点击"浏览"按钮选择包含模板文件的目录</li>
-                <li><strong>选择输出目录</strong>：点击"浏览"按钮选择生成文件的保存位置</li>
-                <li><strong>点击"生成课程资料"</strong>：程序会自动生成所有课程资料</li>
+                <li><strong>上传JSON文件</strong>：在"1. 上传课程信息JSON文件"部分，点击"选择JSON文件"按钮，选择您从学校智能体下载的JSON文件</li>
+                <li><strong>生成期初教学资料</strong>：点击"2. 生成期初教学填报资料"部分的"生成期初教学填报资料"按钮</li>
+                <li><strong>下载生成的资料</strong>：在"4. 生成的教学资料"部分，找到生成的zip文件，点击"下载"按钮保存到您的电脑</li>
+                <li><strong>推送文件到智能体平台</strong>（可选）：在"3. 推送文件到智能体平台"部分，配置MCP API参数后点击"推送文件"按钮</li>
             </ol>
         </div>
         
         <div class="section">
             <h2>生成结果</h2>
-            <p>生成的文件将保存在您选择的输出目录中，按教师姓名和课程代码组织：</p>
+            <p>生成的文件将打包为一个zip文件，按教师姓名和课程代码组织：</p>
             <div class="result-tree">
-生成的课程资料/<br>
-└── 任渝_课程资料/<br>
+任渝_期初教学资料.zip<br>
+└── 智能金融学院_任渝/<br>
     ├── FIN0008B_财经公文写作/<br>
-    │   ├── 2026春-财经公文写作-教学大纲-任渝.docx<br>
-    │   ├── 财经公文写作-课程组期初教学资料检查情况记录表-任渝.xlsx<br>
-    │   └── 智能金融学院-教学大纲审核汇总表-任渝.xlsx<br>
+    │   ├── FIN0008B_财经公文写作_大纲_任渝.docx<br>
+    │   ├── FIN0008B_财经公文写作_审核汇总表_任渝.xlsx<br>
+    │   └── FIN0008B_财经公文写作_检查情况记录表_任渝.xlsx<br>
     └── FIN3004A_大数据分析基础/<br>
-        ├── 2026春-大数据分析基础-教学大纲-任渝.docx<br>
-        ├── 大数据分析基础-课程组期初教学资料检查情况记录表-任渝.xlsx<br>
-        └── 智能金融学院-教学大纲审核汇总表-任渝.xlsx
+        ├── FIN3004A_大数据分析基础_大纲_任渝.docx<br>
+        ├── FIN3004A_大数据分析基础_审核汇总表_任渝.xlsx<br>
+        └── FIN3004A_大数据分析基础_检查情况记录表_任渝.xlsx
             </div>
+            <p>每门课程的三个文档（教学大纲、审核汇总表、检查情况记录表）都保存在以课程代码_课程名命名的文件夹中。</p>
         </div>
         
         <div class="section">
