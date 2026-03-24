@@ -1,3 +1,6 @@
 streamlit
 python-docx
 openpyxl
+flask
+flask-cors
+gunicorn
