@@ -1,321 +1,150 @@
 import streamlit as st
-import json
 import os
+import json
+import tempfile
 import zipfile
-import urllib.parse
-from generate_renyu_materials import RenYuMaterialsGenerator
-from datetime import datetime
-from flask import Flask, request, jsonify
-import threading
-import traceback
+from process_all_json import process_all_json_files
+from mcp_uploader import batch_upload_files
 
-# 创建Flask应用实例
-flask_app = Flask(__name__)
-
-# 设置页面标题和布局
-st.set_page_config(page_title="课程期初资料生成工具", layout="wide")
-
-# 获取URL参数
-query_params = st.query_params
-json_data_param = query_params.get('json_data', None)
+# 设置页面配置
+st.set_page_config(
+    page_title="期初教学资料填制助手",
+    page_icon="📚",
+    layout="wide"
+)
 
 # 页面标题
-st.title("📚 课程期初资料生成工具")
+st.title("📚 期初教学资料填制助手")
 
 # 侧边栏配置
-with st.sidebar:
-    st.subheader("配置选项")
-    template_dir = st.text_input("模板目录", value="期初资料1")
-    output_dir = st.text_input("输出目录", value="output")
+st.sidebar.title("配置")
 
-# 主内容区
-st.markdown("---")
+# MCP API配置
+mcp_endpoint = st.sidebar.text_input("MCP API端点", "https://znt.tfswufe.edu.cn/api/file/upload")
+api_key = st.sidebar.text_input("API密钥", "ak-e7cc7011dce24aa88ed0ed2bba49c90f", type="password")
+# 智能体ID写死为1806
+agent_id = "1806"
+st.sidebar.text_input("智能体ID", agent_id, disabled=True)
 
-# 方式1：从URL参数获取JSON（智能体调用）
-if json_data_param:
-    try:
-        st.info("📥 接收到智能体传递的课程数据")
-        # URL解码
-        json_str = urllib.parse.unquote(json_data_param)
-        course_data = json.loads(json_str)
+# 上传JSON文件
+st.header("1. 上传课程信息JSON文件")
+uploaded_files = st.file_uploader("选择JSON文件", accept_multiple_files=True, type="json")
+
+# 临时目录
+if 'temp_dir' not in st.session_state:
+    st.session_state.temp_dir = tempfile.mkdtemp()
+
+# 保存上传的文件
+if uploaded_files:
+    st.success(f"成功上传 {len(uploaded_files)} 个文件")
+    for file in uploaded_files:
+        file_path = os.path.join(st.session_state.temp_dir, file.name)
+        with open(file_path, 'wb') as f:
+            f.write(file.getbuffer())
+        st.write(f"- {file.name}")
+
+# 生成期初教学填报资料
+st.header("2. 生成期初教学填报资料")
+if st.button("生成期初教学填报资料"):
+    if uploaded_files:
+        with st.spinner("正在生成期初教学填报资料..."):
+            process_all_json_files(st.session_state.temp_dir)
+        st.success("期初教学填报资料生成完成！")
+    else:
+        st.error("请先上传JSON文件")
+
+# 推送文件到智能体平台
+st.header("3. 推送文件到智能体平台")
+if st.button("推送文件"):
+    if uploaded_files and api_key != "ak-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx":
+        with st.spinner("正在准备文件..."):
+            # 确保zip文件已创建
+            create_zip_files(st.session_state.temp_dir)
+        with st.spinner("正在推送文件..."):
+            result = batch_upload_files(
+                st.session_state.temp_dir,
+                mcp_endpoint,
+                api_key,
+                agent_id
+            )
         
-        # 合并相同课程名称的课程信息
-        merged_courses = {}
-        for course in course_data:
-            course_name = course.get('courseName', '')
-            if course_name not in merged_courses:
-                merged_courses[course_name] = course.copy()
+        st.success(f"推送完成！成功: {result['success']}, 失败: {result['failed']}")
         
-        # 显示课程信息
-        st.subheader("📋 课程信息")
-        for i, (course_name, course) in enumerate(merged_courses.items(), 1):
-            with st.expander(f"课程 {i}: {course_name}"):
-                col1, col2 = st.columns(2)
-                with col1:
-                    st.write(f"**课程代码**: {course.get('courseCode', '')}")
-                    st.write(f"**教师姓名**: {course.get('teacherName', '')}")
-                    st.write(f"**开课单位**: {course.get('department', '')}")
-                with col2:
-                    st.write(f"**课程性质**: {course.get('courseNature', '')}")
-                    st.write(f"**学分**: {course.get('credits', '')}")
-                    st.write(f"**总学时**: {course.get('totalHours', '')}")
+        if result['uploaded_files']:
+            st.subheader("成功推送的文件:")
+            for item in result['uploaded_files']:
+                st.write(f"- {item['file']}")
+                if item.get('url'):
+                    st.write(f"  下载链接: {item['url']}")
         
-        # 自动生成按钮
-        if st.button("🚀 生成课程资料", type="primary", key="auto_generate"):
-            with st.spinner("⏳ 正在生成资料，请稍候..."):
-                try:
-                    # 创建生成器实例
-                    generator = RenYuMaterialsGenerator()
-                    generator.template_dir = template_dir
-                    generator.output_base_dir = output_dir
-                    
-                    # 设置课程数据（使用合并后的课程数据）
-                    generator.courses = list(merged_courses.values())
-                    
-                    # 设置元数据
-                    generator.metadata = {
-                        'date': datetime.now().strftime('%Y年%m月%d日'),
-                        'semester': '2026年春季学期'
-                    }
-                    
-                    # 生成资料
-                    generator.generate_all_materials()
-                    
-                    # 获取生成的文件
-                    teacher_name = course_data[0].get('teacherName', '未知教师')
-                    output_folder = os.path.join(generator.output_base_dir, f"{teacher_name}_天府学院期初资料")
-                    
-                    # 创建ZIP文件
-                    zip_filename = f"{teacher_name}_课程资料.zip"
-                    zip_path = os.path.join(output_dir, zip_filename)
-                    
-                    with zipfile.ZipFile(zip_path, 'w') as zipf:
-                        for root, dirs, files in os.walk(output_folder):
-                            for file in files:
-                                file_path = os.path.join(root, file)
-                                arcname = os.path.relpath(file_path, output_dir)
-                                zipf.write(file_path, arcname)
-                    
-                    # 显示成功信息
-                    st.success(f"✅ 资料生成成功！共生成 {len(course_data)} 门课程的资料")
-                    
-                    # 提供下载
-                    st.subheader("📥 下载生成的资料")
-                    with open(zip_path, "rb") as f:
-                        st.download_button(
-                            label=f"下载 {zip_filename}",
-                            data=f,
-                            file_name=zip_filename,
-                            mime="application/zip",
-                            key="download_auto"
-                        )
-                    
-                except Exception as e:
-                    st.error(f"❌ 生成失败: {str(e)}")
-                    import traceback
-                    st.code(traceback.format_exc())
-    
-    except Exception as e:
-        st.error(f"❌ JSON数据解析失败: {str(e)}")
-
-# 分隔线
-st.markdown("---")
-
-# 方式2：手动上传（原有功能）
-st.subheader("📁 手动上传JSON文件")
-uploaded_file = st.file_uploader("选择JSON文件", type="json")
-
-if uploaded_file is not None:
-    # 读取JSON数据
-    try:
-        json_data = json.load(uploaded_file)
-        
-        # 检查JSON格式
-        if isinstance(json_data, dict) and 'courses' in json_data:
-            course_data = json_data['courses']
-        elif isinstance(json_data, list):
-            course_data = json_data
+        if result['failed_files']:
+            st.subheader("推送失败的文件:")
+            for item in result['failed_files']:
+                st.write(f"- {item['file']}: {item['error']}")
+    else:
+        if not uploaded_files:
+            st.error("请先上传JSON文件")
         else:
-            st.error("❌ JSON文件格式不正确，需要包含courses列表")
-            st.stop()
-        
-        # 合并相同课程名称的课程信息
-        merged_courses = {}
-        for course in course_data:
-            course_name = course.get('courseName', '')
-            if course_name not in merged_courses:
-                merged_courses[course_name] = course.copy()
-        
-        # 显示课程信息
-        st.subheader("📋 课程信息")
-        for i, (course_name, course) in enumerate(merged_courses.items(), 1):
-            with st.expander(f"课程 {i}: {course_name}"):
-                col1, col2 = st.columns(2)
-                with col1:
-                    st.write(f"**课程代码**: {course.get('courseCode', '')}")
-                    st.write(f"**教师姓名**: {course.get('teacherName', '')}")
-                    st.write(f"**开课单位**: {course.get('department', '')}")
-                with col2:
-                    st.write(f"**课程性质**: {course.get('courseNature', '')}")
-                    st.write(f"**学分**: {course.get('credits', '')}")
-                    st.write(f"**总学时**: {course.get('totalHours', '')}")
-        
-        # 生成按钮
-        if st.button("🚀 生成课程资料", type="primary", key="manual_generate"):
-            with st.spinner("⏳ 正在生成资料，请稍候..."):
-                try:
-                    # 创建生成器实例
-                    generator = RenYuMaterialsGenerator()
-                    generator.template_dir = template_dir
-                    generator.output_base_dir = output_dir
-                    
-                    # 设置课程数据（使用合并后的课程数据）
-                    generator.courses = list(merged_courses.values())
-                    
-                    # 设置元数据
-                    generator.metadata = {
-                        'date': datetime.now().strftime('%Y年%m月%d日'),
-                        'semester': '2026年春季学期'
-                    }
-                    
-                    # 生成资料
-                    generator.generate_all_materials()
-                    
-                    # 获取生成的文件
-                    teacher_name = course_data[0].get('teacherName', '未知教师')
-                    output_folder = os.path.join(generator.output_base_dir, f"{teacher_name}_天府学院期初资料")
-                    
-                    # 创建ZIP文件
-                    zip_filename = f"{teacher_name}_课程资料.zip"
-                    zip_path = os.path.join(output_dir, zip_filename)
-                    
-                    with zipfile.ZipFile(zip_path, 'w') as zipf:
-                        for root, dirs, files in os.walk(output_folder):
-                            for file in files:
-                                file_path = os.path.join(root, file)
-                                arcname = os.path.relpath(file_path, output_dir)
-                                zipf.write(file_path, arcname)
-                    
-                    # 显示成功信息
-                    st.success(f"✅ 资料生成成功！共生成 {len(course_data)} 门课程的资料")
-                    
-                    # 提供下载
-                    st.subheader("📥 下载生成的资料")
-                    with open(zip_path, "rb") as f:
-                        st.download_button(
-                            label=f"下载 {zip_filename}",
-                            data=f,
-                            file_name=zip_filename,
-                            mime="application/zip",
-                            key="download_manual"
-                        )
-                    
-                except Exception as e:
-                    st.error(f"❌ 生成失败: {str(e)}")
-                    import traceback
-                    st.code(traceback.format_exc())
-                    
-    except json.JSONDecodeError:
-        st.error("❌ JSON文件格式错误，请检查文件内容")
-    except Exception as e:
-        st.error(f"❌ 处理文件时出错: {str(e)}")
-else:
-    st.info("请上传包含课程信息的JSON文件")
+            st.error("请设置正确的API密钥")
 
-# 底部信息
-st.markdown("---")
-st.caption("💡 提示：请确保JSON文件包含完整的课程信息，包括课程名称、代码、教师姓名等字段")
-
-
-# Flask API端点
-@flask_app.route('/api/generate', methods=['POST'])
-def api_generate():
-    """API端点：生成课程资料"""
-    try:
-        data = request.get_json()
-        
-        if not data:
-            return jsonify({'success': False, 'message': '请求数据为空'}), 400
-        
-        courses = data.get('courses', [])
-        
-        if not courses:
-            return jsonify({'success': False, 'message': '课程数据为空'}), 400
-        
-        # 创建生成器实例
-        generator = RenYuMaterialsGenerator()
-        generator.template_dir = "期初资料1"
-        generator.output_base_dir = "output"
-        generator.courses = courses
-        generator.metadata = {
-            'date': datetime.now().strftime('%Y年%m月%d日'),
-            'semester': '2026年春季学期'
-        }
-        
-        # 生成资料
-        generator.generate_all_materials()
-        
-        # 获取生成的文件
-        teacher_name = courses[0].get('teacherName', '未知教师')
-        output_folder = os.path.join(generator.output_base_dir, f"{teacher_name}_天府学院期初资料")
-        
-        # 创建ZIP文件
-        zip_filename = f"{teacher_name}_课程资料.zip"
-        zip_path = os.path.join("output", zip_filename)
-        
-        with zipfile.ZipFile(zip_path, 'w') as zipf:
-            for root, dirs, files in os.walk(output_folder):
-                for file in files:
-                    file_path = os.path.join(root, file)
-                    arcname = os.path.relpath(file_path, "output")
-                    zipf.write(file_path, arcname)
-        
-        # 返回下载链接
-        download_url = f"/api/download/{zip_filename}"
-        
-        return jsonify({
-            'success': True,
-            'zipUrl': download_url,
-            'filename': zip_filename,
-            'message': f'成功生成 {len(courses)} 门课程的资料'
-        })
+def create_zip_files(base_dir):
+    """为每个教师创建zip文件，包含所有生成的教学资料"""
+    zip_files = []
     
-    except Exception as e:
-        print(f"API生成失败: {str(e)}")
-        print(traceback.format_exc())
-        return jsonify({'success': False, 'message': f'生成失败: {str(e)}'}), 500
-
-
-@flask_app.route('/api/download/<filename>', methods=['GET'])
-def api_download(filename):
-    """API端点：下载文件"""
-    try:
-        file_path = os.path.join("output", filename)
-        
-        if not os.path.exists(file_path):
-            return jsonify({'success': False, 'message': '文件不存在'}), 404
-        
-        return flask_app.send_file(
-            file_path,
-            as_attachment=True,
-            download_name=filename,
-            mimetype='application/zip'
-        )
+    # 遍历所有教师文件夹
+    for item in os.listdir(base_dir):
+        item_path = os.path.join(base_dir, item)
+        if os.path.isdir(item_path):
+            # 提取教师姓名
+            teacher_name = item.split('_')[1] if len(item.split('_')) > 1 else item
+            
+            # 创建zip文件
+            zip_filename = f"{teacher_name}_期初教学资料.zip"
+            zip_path = os.path.join(base_dir, zip_filename)
+            
+            with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+                # 遍历教师文件夹中的所有文件
+                for root, dirs, files in os.walk(item_path):
+                    for file in files:
+                        file_path = os.path.join(root, file)
+                        arcname = os.path.relpath(file_path, base_dir)
+                        zipf.write(file_path, arcname)
+            
+            zip_files.append(zip_path)
     
-    except Exception as e:
-        return jsonify({'success': False, 'message': f'下载失败: {str(e)}'}), 500
+    return zip_files
 
+# 显示生成的文件
+st.header("4. 生成的教学资料")
+if os.path.exists(st.session_state.temp_dir):
+    # 创建zip文件
+    zip_files = create_zip_files(st.session_state.temp_dir)
+    
+    # 显示zip文件
+    for zip_path in zip_files:
+        zip_filename = os.path.basename(zip_path)
+        st.write(f"- {zip_filename}")
+        with open(zip_path, 'rb') as f:
+            st.download_button(
+                label=f"下载 {zip_filename}",
+                data=f,
+                file_name=zip_filename,
+                mime="application/zip"
+            )
 
-# 在单独的线程中启动Flask服务器
-def start_flask_server():
-    """在单独的线程中启动Flask服务器"""
-    try:
-        flask_app.run(host='0.0.0.0', port=5001, debug=False)
-    except Exception as e:
-        print(f"Flask服务器启动失败: {str(e)}")
-        print(traceback.format_exc())
+# 清理临时文件
+if st.button("清理临时文件"):
+    import shutil
+    shutil.rmtree(st.session_state.temp_dir)
+    st.session_state.temp_dir = tempfile.mkdtemp()
+    st.success("临时文件已清理")
 
-
-# 启动Flask服务器
-flask_thread = threading.Thread(target=start_flask_server, daemon=True)
-flask_thread.start()
+# 说明
+st.sidebar.header("使用说明")
+st.sidebar.markdown("""
+1. 上传包含课程信息的JSON文件
+2. 点击"生成期初教学填报资料"按钮生成相关资料
+3. 配置MCP API参数
+4. 点击"推送文件"按钮将资料推送到智能体平台
+5. 可以直接下载生成的压缩文件
+""")
